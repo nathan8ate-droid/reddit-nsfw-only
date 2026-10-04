@@ -1,52 +1,54 @@
-# Reddit NSFW Blocker
+# Reddit NSFW Only
 
-A patch bundle for the Reddit Android app that blocks NSFW content.
-It is meant for parental control and for people who never want to see NSFW content on Reddit.
+An experimental Morphe patch bundle for Reddit Android that deliberately does
+the inverse of `warleysr/reddit-nsfw-blocker`.
 
-The patch is always on. It has no setting to turn it off from inside the app.
+## Behaviour
 
-## What it does
+- Forces **Show mature content (I'm over 18)** on locally.
+- If the account preference is off, attempts to turn it on through Reddit's own
+  preference repository so the account stays consistent across clients.
+- Includes mature content in search.
+- Forces NSFW image blurring off.
+- Forces Reddit safe search off.
+- Legacy listings keep `Link` objects only when `getOver18()` is true.
+- Compose feeds keep confirmed NSFW items, preserve structural and UNKNOWN feed
+  objects, and remove fully scanned ordinary non-NSFW items.
+- UNKNOWN items are logged instead of deleted, making Reddit model changes easier
+  to investigate after app updates.
 
-The **Block NSFW content** patch:
+## Important first-build assumption
 
-- Hides NSFW posts from all feeds (home, popular, communities and profiles).
-- Always turns off **Show mature content (I'm over 18)**.
-  If the Reddit account has it turned on, the patch turns it off on the account once,
-  so it is also off on the Reddit website and on other devices.
-- Always turns on safe search and NSFW image blurring.
-- Removes the **Show mature content** and **Blur NSFW images** options from settings
-  (logged in, logged out and incognito mode) and from the incognito mode exit dialog.
+The upstream blocker proves that `com.reddit.domain.SafeSearch.On` exists in
+Reddit `2026.39.0`. This derivative uses the expected counterpart
+`com.reddit.domain.SafeSearch.Off`. That symbol still needs confirmation by a
+successful Morphe build/runtime test against Reddit `2026.39.0`.
 
-## Supported versions
+## Supported target
 
-| App | Package | Version |
-|-----|---------|---------|
-| Reddit | `com.reddit.frontpage` | `2026.39.0` |
+Reddit `2026.39.0` (`com.reddit.frontpage`), matching the upstream patch this
+fork was derived from.
 
-## How to use
+## Build
 
-1. In [Morphe Manager](https://morphe.software), add this repository as a patch source:
-   `https://github.com/warleysr/reddit-nsfw-blocker`
-2. Patch Reddit and select **Block NSFW content**.
-
-The patch uses its own extension, so it can be applied together with the official Morphe Reddit patches.
-Apply it together with them: patching Reddit with only this patch has not been tested.
-
-## Building
-
-Building needs a GitHub token with the `read:packages` scope, because the Morphe Gradle plugin
-and libraries are published on GitHub Packages.
+GitHub Actions is configured to install Gradle 9.8 itself, run the pure-Java
+classifier/filter tests, then run:
 
 ```bash
-GITHUB_ACTOR=<user> GITHUB_TOKEN=<token> ./gradlew :patches:buildAndroid
+gradle clean :patches:buildAndroid
 ```
 
-The bundle is saved to `patches/build/libs/patches-<version>.mpp`.
+Morphe dependencies are hosted on GitHub Packages, so the workflow supplies the
+repository `GITHUB_TOKEN` automatically. The resulting `.mpp` is uploaded as the
+`reddit-nsfw-only-mpp` workflow artifact.
 
-## License
+## Origin / license
 
-This project is based on [Morphe Patches](https://github.com/MorpheApp/morphe-patches)
-and is licensed under the [GNU General Public License v3.0](LICENSE),
-with the additional GPLv3 Section 7 terms in the [NOTICE](NOTICE) file.
+This is a modified derivative of:
 
-It is not affiliated with or endorsed by Morphe or Reddit.
+- https://github.com/warleysr/reddit-nsfw-blocker
+- https://github.com/MorpheApp/morphe-patches
+
+It is intentionally marked as a different project and is not affiliated with
+or endorsed by the upstream authors, Morphe, or Reddit. See `LICENSE` and
+`NOTICE`.

@@ -1,6 +1,6 @@
 -dontobfuscate
 -dontoptimize
 -keepattributes *
--keep class io.github.warleysr.nsfwblocker.** {
+-keep class io.github.redditnsfwonly.** {
   *;
 }
