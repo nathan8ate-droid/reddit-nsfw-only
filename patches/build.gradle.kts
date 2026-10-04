@@ -1,20 +1,18 @@
-group = "io.github.warleysr"
+group = "io.github.redditnsfwonly"
 
 patches {
     about {
-        name = "Reddit NSFW Blocker"
-        description = "Blocks NSFW content in the Reddit app"
-        source = "git@github.com:warleysr/reddit-nsfw-blocker.git"
-        author = "warleysr"
-        contact = "https://github.com/warleysr/reddit-nsfw-blocker/issues"
-        website = "https://github.com/warleysr/reddit-nsfw-blocker"
-        license = "GNU General Public License v3.0, with additional GPL section 7 requirements"
+        name = "Reddit NSFW Only"
+        description = "Keeps mature Reddit content and filters confirmed non-NSFW feed posts"
+        source = "git@github.com:nathan8ate-droid/reddit-nsfw-only.git"
+        author = "nathan8ate-droid"
+        contact = "https://github.com/nathan8ate-droid/reddit-nsfw-only/issues"
+        website = "https://github.com/nathan8ate-droid/reddit-nsfw-only"
+        license = "GNU General Public License v3.0, with preserved upstream NOTICE requirements"
     }
 }
 
 dependencies {
-    // Required due to smali, or build fails. Can be removed once smali is bumped.
     implementation(libs.guava)
-
     implementation(libs.morphe.patches.library)
 }

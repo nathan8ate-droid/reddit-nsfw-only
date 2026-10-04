@@ -1,4 +1,4 @@
-rootProject.name = "reddit-nsfw-blocker"
+rootProject.name = "reddit-nsfw-only"
 
 pluginManagement {
     repositories {
@@ -13,7 +13,6 @@ pluginManagement {
                 password = providers.gradleProperty("gpr.key").getOrElse(System.getenv("GITHUB_TOKEN"))
             }
         }
-        // Obtain baksmali/smali from source builds - https://github.com/iBotPeaches/smali
         maven { url = uri("https://jitpack.io") }
     }
 }
@@ -24,10 +23,7 @@ plugins {
 
 settings {
     extensions {
-        defaultNamespace = "io.github.warleysr.nsfwblocker.extension"
-
-        // Must resolve to an absolute path (not relative),
-        // otherwise the extensions in subfolders will fail to find the proguard config.
+        defaultNamespace = "io.github.redditnsfwonly.extension"
         proguardFiles(rootProject.projectDir.resolve("extensions/proguard-rules.pro").toString())
     }
 }
