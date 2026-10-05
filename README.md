@@ -3,6 +3,17 @@
 An experimental Morphe patch bundle for Reddit Android that deliberately does
 the inverse of `warleysr/reddit-nsfw-blocker`.
 
+## Add to Morphe
+
+Add this repository as a **Remote** patch source:
+
+```text
+https://github.com/nathan8ate-droid/reddit-nsfw-only
+```
+
+Morphe resolves `patches-bundle.json` from `main` and can update the source
+automatically when a newer bundle is published.
+
 ## Behaviour
 
 - Forces **Show mature content (I'm over 18)** on locally and attempts to sync it
@@ -40,15 +51,12 @@ This source is intended to be used alongside normal Morphe Reddit patches. The
 official **Hide ads** patch also modifies the legacy `Listing` constructor;
 the modern Home hook added here is a separate GraphQL page-builder path.
 
-## Build
+## Build and publishing
 
-GitHub Actions runs the Android-free scanner/filter tests and then:
-
-```bash
-gradle clean :patches:buildAndroid
-```
-
-The resulting `.mpp` is uploaded as `reddit-nsfw-only-mpp`.
+GitHub Actions runs the Android-free scanner/filter tests, builds the Morphe
+bundle, verifies it contains `classes.dex`, uploads the workflow artifact, and
+publishes the matching `.mpp` as a GitHub Release asset used by
+`patches-bundle.json`.
 
 ## Origin / license
 
