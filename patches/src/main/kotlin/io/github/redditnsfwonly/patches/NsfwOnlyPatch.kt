@@ -45,7 +45,7 @@ private val hideIncognitoNsfwTogglesPatch = resourcePatch {
 val nsfwOnlyPatch = bytecodePatch(
     name = "NSFW only",
     description = "Always enables mature content, disables NSFW blur and safe search, " +
-        "and filters confirmed non-NSFW posts while preserving structural/unknown feed objects."
+        "and keeps only confirmed 18+ posts in the modern home feed and legacy listings."
 ) {
     compatibleWith(COMPATIBILITY_REDDIT)
     extendWith("extensions/nsfwonly.mpe")
@@ -101,11 +101,12 @@ val nsfwOnlyPatch = bytecodePatch(
             ) ?: logger.severe("Could not hide the '$key' settings item")
         }
 
-        FeedDataConstructorFingerprint.method.addInstructions(
+        // Modern Home is GraphQL cell-backed. By the time Reddit has built FeedData/feed
+        // elements, the NSFW flag is gone, so filter the response before mapping.
+        NsfwHomeFeedPageFingerprint.method.addInstructions(
             0,
             """
-                invoke-static { p1 }, $EXTENSION_CLASS->filterFeedItems(Ljava/util/List;)Ljava/util/List;
-                move-result-object p1
+                invoke-static/range { p1 .. p1 }, $EXTENSION_CLASS->filterHomeFeedResponse(Ljava/lang/Object;)V
             """
         )
 

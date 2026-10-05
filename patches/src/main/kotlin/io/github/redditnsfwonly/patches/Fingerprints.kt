@@ -99,25 +99,13 @@ internal object SafeSearchEnabledFingerprint : Fingerprint(
     )
 )
 
-private object FeedDataToStringFingerprint : Fingerprint(
-    name = "toString",
-    returnType = "Ljava/lang/String;",
-    parameters = listOf(),
+internal object NsfwHomeFeedPageFingerprint : Fingerprint(
+    definingClass = "Lcom/reddit/feeds/home/impl/data/paging/",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    parameters = listOf("L", "Ljava/lang/Integer;", "L"),
     filters = listOf(
-        string("FeedData(items=")
-    )
-)
-
-internal object FeedDataConstructorFingerprint : Fingerprint(
-    classFingerprint = FeedDataToStringFingerprint,
-    name = "<init>",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.CONSTRUCTOR),
-    returnType = "V",
-    filters = listOf(
-        // The synthetic default constructor calls the primary constructor instead.
-        methodCall(
-            opcode = Opcode.INVOKE_DIRECT,
-            smali = "Ljava/lang/Object;-><init>()V"
+        fieldAccess(
+            smali = "Lcom/reddit/feeds/data/FeedType;->HOME:Lcom/reddit/feeds/data/FeedType;"
         )
     )
 )
@@ -169,6 +157,14 @@ internal object ListingFingerprint : Fingerprint(
         fieldAccess(
             opcode = Opcode.IPUT_OBJECT,
             smali = "Lcom/reddit/domain/model/listing/Listing;->children:Ljava/util/List;"
+        ),
+        fieldAccess(
+            opcode = Opcode.IPUT_OBJECT,
+            smali = "Lcom/reddit/domain/model/listing/Listing;->after:Ljava/lang/String;"
+        ),
+        fieldAccess(
+            opcode = Opcode.IPUT_OBJECT,
+            smali = "Lcom/reddit/domain/model/listing/Listing;->before:Ljava/lang/String;"
         )
     )
 )

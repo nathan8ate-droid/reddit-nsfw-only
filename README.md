@@ -5,50 +5,57 @@ the inverse of `warleysr/reddit-nsfw-blocker`.
 
 ## Behaviour
 
-- Forces **Show mature content (I'm over 18)** on locally.
-- If the account preference is off, attempts to turn it on through Reddit's own
-  preference repository so the account stays consistent across clients.
+- Forces **Show mature content (I'm over 18)** on locally and attempts to sync it
+  through Reddit's own preference repository.
 - Includes mature content in search.
-- Forces NSFW image blurring off.
-- Forces Reddit safe search off.
-- Legacy listings keep `Link` objects only when `getOver18()` is true.
-- Compose feeds keep confirmed NSFW items, preserve structural and UNKNOWN feed
-  objects, and remove fully scanned ordinary non-NSFW items.
-- UNKNOWN items are logged instead of deleted, making Reddit model changes easier
-  to investigate after app updates.
+- Forces NSFW image blurring off and safe search off.
+- **Modern Home:** filters Reddit's GraphQL cell response before it becomes feed
+  elements, keeping only posts carrying Reddit's post-level NSFW indicator.
+- **Legacy/listing-backed screens:** keeps `Link` objects only when
+  `getOver18()` is true.
+- Strict/fail-closed policy: unknown/unreadable Home edges are removed rather
+  than allowed through. A page with zero confirmed NSFW posts may therefore be
+  empty instead of leaking one SFW post.
 
-## Important first-build assumption
+## Why v0.2 changed the feed hook
 
-The upstream blocker proves that `com.reddit.domain.SafeSearch.On` exists in
-Reddit `2026.39.0`. This derivative uses the expected counterpart
-`com.reddit.domain.SafeSearch.Off`. That symbol still needs confirmation by a
-successful Morphe build/runtime test against Reddit `2026.39.0`.
+v0.1 filtered `Listing` / mapped `FeedData` models. Reverse-engineering and
+on-device research in `variablenine/morphe-patches` shows modern Reddit Home is
+GraphQL cell-backed and the mapped feed elements no longer carry an NSFW flag.
+The post-level marker still exists earlier in the response as
+`CellIndicatorType.NSFW` / `IndicatorType.NSFW`.
+
+v0.2 therefore hooks the Home page builder and identifies a post by its `t3_`
+fullname plus an NSFW enum whose type also contains `ORIGINAL`,
+`QUARANTINED` and `SPOILER`. This avoids false positives from unrelated
+Reddit enums that also contain an `NSFW` member.
 
 ## Supported target
 
-Reddit `2026.39.0` (`com.reddit.frontpage`), matching the upstream patch this
-fork was derived from.
+Reddit `2026.39.0` (`com.reddit.frontpage`).
+
+## Compatibility with other Morphe patches
+
+This source is intended to be used alongside normal Morphe Reddit patches. The
+official **Hide ads** patch also modifies the legacy `Listing` constructor;
+the modern Home hook added here is a separate GraphQL page-builder path.
 
 ## Build
 
-GitHub Actions is configured to install Gradle 9.8 itself, run the pure-Java
-classifier/filter tests, then run:
+GitHub Actions runs the Android-free scanner/filter tests and then:
 
 ```bash
 gradle clean :patches:buildAndroid
 ```
 
-Morphe dependencies are hosted on GitHub Packages, so the workflow supplies the
-repository `GITHUB_TOKEN` automatically. The resulting `.mpp` is uploaded as the
-`reddit-nsfw-only-mpp` workflow artifact.
+The resulting `.mpp` is uploaded as `reddit-nsfw-only-mpp`.
 
 ## Origin / license
 
-This is a modified derivative of:
+Modified derivative / adapted GPLv3 work from:
 
 - https://github.com/warleysr/reddit-nsfw-blocker
 - https://github.com/MorpheApp/morphe-patches
+- https://github.com/variablenine/morphe-patches
 
-It is intentionally marked as a different project and is not affiliated with
-or endorsed by the upstream authors, Morphe, or Reddit. See `LICENSE` and
-`NOTICE`.
+See `LICENSE` and `NOTICE`.
