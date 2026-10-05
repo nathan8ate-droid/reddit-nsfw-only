@@ -7,5 +7,5 @@ mkdir -p "$OUT"
 javac -Xlint:unchecked -Werror -d "$OUT" \
   $(find "$ROOT/tests/src" -name '*.java' -print) \
   $(find "$ROOT/extensions/nsfwonly/src/main/java" -name '*.java' -print)
-java -cp "$OUT" io.github.redditnsfwonly.extension.FeedItemClassifierTest
+java -cp "$OUT" io.github.redditnsfwonly.extension.NsfwCellScannerSelfTest
 java -cp "$OUT" io.github.redditnsfwonly.extension.BlockNsfwContentPatchTest
